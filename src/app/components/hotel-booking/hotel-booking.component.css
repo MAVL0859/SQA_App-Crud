@@ -1,0 +1,4 @@
+.gallery-container img {
+  height: 200px; /* Establece el alto deseado */
+  object-fit: cover; /* Ajusta la imagen para cubrir el contenedor */
+}

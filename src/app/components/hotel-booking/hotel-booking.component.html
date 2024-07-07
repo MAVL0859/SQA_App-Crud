@@ -1,0 +1,164 @@
+<!-- Botón de configuraciones -->
+<div class="dropdown mt-5">
+  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+    <i class="fas fa-cog"></i> Configuraciones
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+    <li><button class="dropdown-item"  (click)="openUserDetailsModal()"><i class="fas fa-eye"></i> Mi perfil</button></li>
+    <li><button class="dropdown-item" (click)="openDeleteModal()"><i class="fas fa-trash-alt"></i> Eliminar perfil</button></li>
+    <li><button class="dropdown-item" (click)="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</button></li>
+  </ul>
+</div>
+
+<!-- Modal para ver datos del usuario -->
+<div class="modal fade" id="userDetailsModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Datos de la cuenta</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="closeUserDetailsModal()"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="userDetailsForm">
+          <div class="mb-3">
+            <label for="name" class="form-label">Nombre</label>
+            <input type="text" id="name" formControlName="name" class="form-control"  [attr.disabled]="true">
+          </div>
+          <div class="mb-3">
+            <label for="lastname" class="form-label">Apellido</label>
+            <input type="text" id="lastname" formControlName="lastname" class="form-control"  [attr.disabled]="true">
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" id="email" formControlName="email" class="form-control"  [attr.disabled]="true">
+          </div>
+          <div class="mb-3">
+            <label for="phonenumber" class="form-label">Número de Teléfono</label>
+            <input type="text" id="phonenumber" formControlName="phonenumber" class="form-control"  [attr.disabled]="true">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeUserDetailsModal()">Cerrar</button>
+        <button type="button" class="btn btn-primary" (click)="openEditUserModal()">Editar perfil</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para editar datos del usuario -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Mis datos</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="closeEditUserModal()"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="editUserForm" >
+          <div class="mb-3">
+            <label for="name" class="form-label">Nombre</label>
+            <input type="text" id="name" formControlName="name" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label for="lastname" class="form-label">Apellido</label>
+            <input type="text" id="lastname" formControlName="lastname" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" id="email" formControlName="email" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label for="phonenumber" class="form-label">Número de Teléfono</label>
+            <input type="text" id="phonenumber" formControlName="phonenumber" class="form-control">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeEditUserModal()">Cerrar</button>
+        <button type="button" class="btn btn-primary" (click)="updateUser()">Guardar Cambios</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para confirmar la eliminación -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmDeleteModalLabel">Eliminar cuenta</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="cancelDelete()"></button>
+      </div>
+      <div class="modal-body">
+        Estás a punto de eliminar tu cuenta. Esta acción no se puede deshacer.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="cancelDelete()">Cancelar</button>
+        <button type="button" class="btn btn-danger" (click)="deleteAccount()">Confirmar eliminación</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Contenedor para notificaciones flotantes -->
+<div id="notificationContainer" style="position: fixed; top: 20px; right: 20px; z-index: 1050;"></div>
+
+
+<div class="container">
+  <!-- Mensaje de bienvenida -->
+  <div *ngIf="userEmail" class="alert alert-success mt-3" role="alert">
+    <p>Bienvenido a DreamStay,<strong style="color: #a17549;"> {{ userEmail }}</strong>!</p>
+  </div>
+
+  <div class="reservation-container">
+    <h1 class="display-4">Reservación de hoteles <strong>DreamStay</strong></h1>
+    <p class="lead">Elija las fechas deseadas y el tipo de habitación para hacer una reserva.</p>
+    <!-- Reservation form goes here -->
+  </div>
+
+  <div class="gallery-container">
+    <h2 class="mt-5">Destinos</h2>
+    <!-- Mini gallery goes here -->
+    <div class="row">
+      <div class="col-md-4">
+        <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2b/e5/08/dc/deluxe-king.jpg?w=300&h=-1&s=1"
+          alt="Deluxe King" class="img-fluid">
+      </div>
+      <div class="col-md-4">
+        <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/29/58/ee/65/go-quito-hotel.jpg?w=300&h=-1&s=1"
+          alt="Go Quito Hotel" class="img-fluid">
+      </div>
+      <div class="col-md-4">
+        <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2c/29/8c/69/signature-king.jpg?w=300&h=-1&s=1"
+          alt="Signature King" class="img-fluid">
+      </div>
+    </div>
+  </div>
+
+  <div class="info-container">
+    <h2 class="mt-5">Información</h2>
+    <!-- Information section goes here -->
+    <div class="row">
+      <div class="col-md-6">
+        <h4>Ubicación</h4>
+        <p>En DreamStay encontraras las mejores ubicaciones de hoteles.</p>
+      </div>
+      <div class="col-md-6">
+        <h4>Comodidades</h4>
+        <ul>
+          <li>Piscinas</li>
+          <li>Spa y centro de bienestar</li>
+          <li>Restaurantes y bar</li>
+          <li>Servicos de habitaciones las 24 horas</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+    <div class="collapse navbar-collapse" id="navbarNav"></div> -->

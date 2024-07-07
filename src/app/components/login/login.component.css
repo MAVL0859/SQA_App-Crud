@@ -1,0 +1,49 @@
+.container {
+  margin-top: 50px;
+}
+
+.card {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.card-header {
+  background-color: #d4a373;
+  color: white;
+}
+
+input:-webkit-autofill {
+  background-color: #dda15e; /* Cambiar el color de fondo cuando se autocompleta */
+  border-color: #ccd5ae; /* Cambiar el color del borde cuando se autocompleta */
+  box-shadow: 0 0 0 50px #f0f8ff inset; /* Cambiar la sombra del borde cuando se autocompleta */
+  color: #000; /* Cambiar el color del texto cuando se autocompleta */
+}
+
+input:focus {
+  outline: none; /* Quita el borde por defecto al enfocar */
+  border-color: #ccd5ae; /* Cambiar el color del borde cuando se selecciona */
+  box-shadow: 0 0 0 0.2rem rgba(159, 201, 63, 0.25); /* Cambiar la sombra al enfocar */
+}
+
+.btn-primary {
+  background-color: #d4a373;
+  border: none;
+  width: 100px;
+}
+
+.btn-primary:hover {
+  background-color: #ad7f5a;
+}
+
+.custom-alert {
+  background-color: #faedcd; /* Color de fondo */
+  border-color: #ccd5ae; /* Color del borde */
+  color: #ad7f5a; /* Color del texto */
+  border-radius: 0.25rem; /* Borde redondeado */
+  padding: 0.75rem 1.25rem; /* Espaciado interno */
+  margin-top: 1rem; /* Espaciado superior */
+}
+
+.custom-alert strong {
+  font-weight: bold; /* Texto en negrita */
+}
+
