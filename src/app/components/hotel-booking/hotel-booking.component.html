@@ -1,15 +1,3 @@
-<!-- Botón de configuraciones -->
-<div class="dropdown mt-5">
-  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-    <i class="fas fa-cog"></i> Configuraciones
-  </button>
-  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-    <li><button class="dropdown-item"  (click)="openUserDetailsModal()"><i class="fas fa-eye"></i> Mi perfil</button></li>
-    <li><button class="dropdown-item" (click)="openDeleteModal()"><i class="fas fa-trash-alt"></i> Eliminar perfil</button></li>
-    <li><button class="dropdown-item" (click)="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</button></li>
-  </ul>
-</div>
-
 <!-- Modal para ver datos del usuario -->
 <div class="modal fade" id="userDetailsModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
@@ -22,19 +10,20 @@
         <form [formGroup]="userDetailsForm">
           <div class="mb-3">
             <label for="name" class="form-label">Nombre</label>
-            <input type="text" id="name" formControlName="name" class="form-control"  [attr.disabled]="true">
+            <input type="text" id="name" formControlName="name" class="form-control" [attr.disabled]="true">
           </div>
           <div class="mb-3">
             <label for="lastname" class="form-label">Apellido</label>
-            <input type="text" id="lastname" formControlName="lastname" class="form-control"  [attr.disabled]="true">
+            <input type="text" id="lastname" formControlName="lastname" class="form-control" [attr.disabled]="true">
           </div>
           <div class="mb-3">
             <label for="email" class="form-label">Email</label>
-            <input type="email" id="email" formControlName="email" class="form-control"  [attr.disabled]="true">
+            <input type="email" id="email" formControlName="email" class="form-control" [attr.disabled]="true">
           </div>
           <div class="mb-3">
             <label for="phonenumber" class="form-label">Número de Teléfono</label>
-            <input type="text" id="phonenumber" formControlName="phonenumber" class="form-control"  [attr.disabled]="true">
+            <input type="text" id="phonenumber" formControlName="phonenumber" class="form-control"
+              [attr.disabled]="true">
           </div>
         </form>
       </div>
@@ -55,7 +44,7 @@
         <button type="button" class="btn-close" aria-label="Close" (click)="closeEditUserModal()"></button>
       </div>
       <div class="modal-body">
-        <form [formGroup]="editUserForm" >
+        <form [formGroup]="editUserForm">
           <div class="mb-3">
             <label for="name" class="form-label">Nombre</label>
             <input type="text" id="name" formControlName="name" class="form-control">
@@ -83,7 +72,8 @@
 </div>
 
 <!-- Modal para confirmar la eliminación -->
-<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel"
+  aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -108,57 +98,100 @@
 <div class="container">
   <!-- Mensaje de bienvenida -->
   <div *ngIf="userEmail" class="alert alert-success mt-3" role="alert">
-    <p>Bienvenido a DreamStay,<strong style="color: #a17549;"> {{ userEmail }}</strong>!</p>
+    <p>Bienvenido a nuestra aplicación de lista de tareas, <strong>{{ userEmail }}</strong>!</p>
   </div>
 
-  <div class="reservation-container">
-    <h1 class="display-4">Reservación de hoteles <strong>DreamStay</strong></h1>
-    <p class="lead">Elija las fechas deseadas y el tipo de habitación para hacer una reserva.</p>
-    <!-- Reservation form goes here -->
+  <div class="dropdown mt-3">
+    <button class="btn btn-outline-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown"
+      aria-expanded="false">
+      <i class="fas fa-cog"></i> Configuraciones
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+      <li><button class="dropdown-item" (click)="openUserDetailsModal()"><i class="fas fa-user-circle me-2"></i> Mi
+          perfil</button></li>
+      <li><button class="dropdown-item" (click)="openDeleteModal()"><i class="fas fa-trash-alt me-2"></i> Eliminar
+          perfil</button></li>
+      <li><button class="dropdown-item" (click)="logout()"><i class="fas fa-sign-out-alt me-2"></i> Cerrar
+          sesión</button></li>
+    </ul>
   </div>
 
-  <div class="gallery-container">
-    <h2 class="mt-5">Destinos</h2>
-    <!-- Mini gallery goes here -->
+  <div class="task-list-container">
+    <h1 class="display-4">Administrador de tareas</h1>
+    <p class="lead">Administre sus tareas diarias de manera eficiente.</p>
+
     <div class="row">
-      <div class="col-md-4">
-        <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2b/e5/08/dc/deluxe-king.jpg?w=300&h=-1&s=1"
-          alt="Deluxe King" class="img-fluid">
+      <div class="col-md-8">
+        <h2>Lista de Tareas</h2>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Título</th>
+                <th scope="col">Descripción</th>
+                <th scope="col">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngFor="let task of tasks">
+                <tr>
+                  <ng-template [ngIf]="editingTaskId !== task.id">
+                    <td>{{ task.title }}</td>
+                    <td>{{ task.description }}</td>
+                    <td>
+                      <button class="btn btn-primary btn-sm me-2" (click)="editTask(task)">Editar</button>
+                      <button class="btn btn-danger btn-sm" (click)="deleteTask(task.id)">Eliminar</button>
+                    </td>
+                  </ng-template>
+                  <ng-template [ngIf]="editingTaskId === task.id">
+                    <td><input [(ngModel)]="editedTask.title" class="form-control"></td>
+                    <td><input [(ngModel)]="editedTask.description" class="form-control"></td>
+                    <td>
+                      <button class="btn btn-success btn-sm me-2" (click)="updateTask()">Guardar</button>
+                      <button class="btn btn-secondary btn-sm" (click)="cancelEdit()">Cancelar</button>
+                    </td>
+                  </ng-template>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </div>
       </div>
+
       <div class="col-md-4">
-        <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/29/58/ee/65/go-quito-hotel.jpg?w=300&h=-1&s=1"
-          alt="Go Quito Hotel" class="img-fluid">
-      </div>
-      <div class="col-md-4">
-        <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2c/29/8c/69/signature-king.jpg?w=300&h=-1&s=1"
-          alt="Signature King" class="img-fluid">
+        <h2>Agregar Nueva Tarea</h2>
+        <form (ngSubmit)="addTask()">
+          <div class="mb-3">
+            <label for="title" class="form-label">Título:</label>
+            <input id="title" [(ngModel)]="newTask.title" name="title" class="form-control"
+              placeholder="Ingresa el nombre de la tarea" required>
+          </div>
+          <div class="mb-3">
+            <label for="description" class="form-label">Descripción:</label>
+            <input id="description" [(ngModel)]="newTask.description" name="description" class="form-control"
+              placeholder="Describe la tarea" required>
+          </div>
+          <button type="submit" class="btn btn-success">Agregar Tarea</button>
+        </form>
       </div>
     </div>
-  </div>
 
-  <div class="info-container">
-    <h2 class="mt-5">Información</h2>
-    <!-- Information section goes here -->
-    <div class="row">
-      <div class="col-md-6">
-        <h4>Ubicación</h4>
-        <p>En DreamStay encontraras las mejores ubicaciones de hoteles.</p>
-      </div>
-      <div class="col-md-6">
-        <h4>Comodidades</h4>
-        <ul>
-          <li>Piscinas</li>
-          <li>Spa y centro de bienestar</li>
-          <li>Restaurantes y bar</li>
-          <li>Servicos de habitaciones las 24 horas</li>
-        </ul>
+    <hr>
+
+    <div class="info-container mt-5">
+      <h2>Información Adicional</h2>
+      <div class="row">
+        <div class="col-md-6">
+          <h4>Funcionalidades</h4>
+          <ul>
+            <li>Agregar, editar y eliminar tareas</li>
+          </ul>
+        </div>
+        <div class="col-md-6">
+          <h4>Compatibilidad</h4>
+          <p>Acceda a su lista de tareas desde cualquier dispositivo.</p>
+        </div>
       </div>
     </div>
   </div>
 </div>
-
-<!--
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-    <div class="collapse navbar-collapse" id="navbarNav"></div> -->

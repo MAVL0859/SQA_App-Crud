@@ -15,6 +15,8 @@ export class DataService {
   private userDetailsURL = "http://localhost:3000/user-details"; // URL para obtener detalles del usuario
   private updateUserURL = "http://localhost:3000/update-user"; // URL para actualizar los datos del usuario
   private logoutURL = "http://localhost:3000/logout"; // URL para cerrar sesión
+  private tasksURL = "http://localhost:3000/tasks"; // URL para gestionar tareas
+
 
   constructor(private http: HttpClient) { }
 
@@ -72,4 +74,45 @@ export class DataService {
   logout(): Observable<any> {
     return this.http.post(this.logoutURL, {});
   }
+
+   /**
+   * Obtiene todas las tareas de un usuario específico.
+   * @param userEmail - El correo electrónico del usuario para filtrar las tareas.
+   * @returns Un observable que emite la respuesta del servidor.
+   */
+   getTasks(userEmail: string): Observable<any> {
+    const params = new HttpParams().set('email', userEmail);
+    return this.http.get(this.tasksURL, { params });
+  }
+
+  /**
+   * Crea una nueva tarea para un usuario específico.
+   * @param userEmail - El correo electrónico del usuario al que se asignará la tarea.
+   * @param task - Los datos de la tarea que se va a crear.
+   * @returns Un observable que emite la respuesta del servidor.
+   */
+  createTask(userEmail: string, task: any): Observable<any> {
+    task.email = userEmail; // Añadir el correo electrónico al objeto de tarea
+    return this.http.post(this.tasksURL, task);
+  }
+
+  /**
+   * Actualiza una tarea existente para un usuario específico.
+   * @param id - El ID de la tarea a actualizar.
+   * @param task - Los datos actualizados de la tarea.
+   * @returns Un observable que emite la respuesta del servidor.
+   */
+  updateTask(id: number, task: any): Observable<any> {
+    return this.http.put(`${this.tasksURL}/${id}`, task);
+  }
+
+  /**
+   * Elimina una tarea específica para un usuario.
+   * @param id - El ID de la tarea a eliminar.
+   * @returns Un observable que emite la respuesta del servidor.
+   */
+  deleteTask(id: number): Observable<any> {
+    return this.http.delete(`${this.tasksURL}/${id}`);
+  }
 }
+

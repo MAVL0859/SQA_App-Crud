@@ -199,6 +199,70 @@ app.post('/logout', (req, res) => {
   res.status(200).json({ message: 'Sesión cerrada correctamente' });
 });
 
+// Endpoint para obtener todas las tareas
+app.get('/tasks', (req, res) => {
+  const query = 'SELECT * FROM tasks';
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error al obtener las tareas:', err);
+      res.status(500).json({ error: 'Error al obtener las tareas' });
+      return;
+    }
+    res.status(200).json(results);
+  });
+});
+
+// Endpoint para crear una nueva tarea
+app.post('/tasks', (req, res) => {
+  const { title, description } = req.body;
+  const query = 'INSERT INTO tasks (title, description) VALUES (?, ?)';
+  db.query(query, [title, description], (err, result) => {
+    if (err) {
+      console.error('Error al crear la tarea:', err);
+      res.status(500).json({ error: 'Error al crear la tarea' });
+      return;
+    }
+    res.status(201).json({ message: 'Tarea creada correctamente', taskId: result.insertId });
+  });
+});
+
+// Endpoint para actualizar una tarea
+app.put('/tasks/:id', (req, res) => {
+  const id = req.params.id;
+  const { title, description } = req.body;
+  const query = 'UPDATE tasks SET title = ?, description = ? WHERE id = ?';
+  db.query(query, [title, description, id], (err, result) => {
+    if (err) {
+      console.error('Error al actualizar la tarea:', err);
+      res.status(500).json({ error: 'Error al actualizar la tarea' });
+      return;
+    }
+    if (result.affectedRows === 0) {
+      res.status(404).json({ error: 'Tarea no encontrada' });
+      return;
+    }
+    res.status(200).json({ message: 'Tarea actualizada correctamente' });
+  });
+});
+
+// Endpoint para eliminar una tarea
+app.delete('/tasks/:id', (req, res) => {
+  const id = req.params.id;
+  const query = 'DELETE FROM tasks WHERE id = ?';
+  db.query(query, [id], (err, result) => {
+    if (err) {
+      console.error('Error al eliminar la tarea:', err);
+      res.status(500).json({ error: 'Error al eliminar la tarea' });
+      return;
+    }
+    if (result.affectedRows === 0) {
+      res.status(404).json({ error: 'Tarea no encontrada' });
+      return;
+    }
+    res.status(200).json({ message: 'Tarea eliminada correctamente' });
+  });
+});
+
 // Ruta para la página principal
 app.get('/', (req, res) => {
   res.send('¡Bienvenido al servidor Node.js!');

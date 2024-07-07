@@ -1,13 +1,9 @@
 import { Component } from '@angular/core';
-//Modificaciones "Importar FormBuilder y FormGroup"
+// Importar FormBuilder y FormGroup para la creación y gestión de formularios reactivos
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { DataService } from '../../services/data.service'; //Para esta ejecutar priemro "ng generate service data"
-/*Para expres los comandos son:
-npm init -y
-npm install express body-parser cors mysql2
-y luego se crea el archivo server.js, para evitar errores en carpetas es mejor dejarlo fuera de alguna carpeta
-*/
-//Importar router para la redirección luego de un inicio de sesión exitosp
+// Importar el servicio de datos para manejar las solicitudes HTTP relacionadas con el usuario
+import { DataService } from '../../services/data.service';
+// Importar Router para la redirección luego de un inicio de sesión exitoso
 import { Router } from '@angular/router';
 
 @Component({
@@ -16,48 +12,53 @@ import { Router } from '@angular/router';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  // Clave: Definimos loginForm como FormGroup
+  // Definir loginForm como un FormGroup
   loginForm: FormGroup;
-  //mensaje
+  // Mensaje de respuesta para mostrar mensajes de éxito o error
   responseMessage: string = '';
+  // Indicador de éxito o error en la respuesta
   isSuccess: boolean | null = null;
 
   constructor(private fb: FormBuilder, private dataService: DataService, private router: Router) {
+    // Crear el formulario de inicio de sesión con validaciones
     this.loginForm = this.fb.group({
-      // Definimos nuestros parametros o atributos cómo string vacíos
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required]
+      email: ['', [Validators.required, Validators.email]], // Campo obligatorio para el correo electrónico con validación de formato
+      password: ['', Validators.required] // Campo obligatorio para la contraseña
     });
   }
 
+  /**
+   * Maneja el envío del formulario de inicio de sesión.
+   */
   onSubmit() {
-    // revisar si el formulario es válido
+    // Revisar si el formulario es válido
     if (this.loginForm.valid) {
-
+      // Si el formulario es válido, enviar los datos al servicio de inicio de sesión
       this.dataService.login(this.loginForm.value).subscribe({
         next: response => {
-          //respuesta
-          console.log('Data sent successfully', response);
+          // Respuesta exitosa
+          console.log('Datos enviados exitosamente', response);
           this.responseMessage = response.message;
           this.isSuccess = true;
-          const email = this.loginForm.value.email; //Aquí extraemos el 'email'
+          const email = this.loginForm.value.email; // Extraer el correo electrónico del formulario
 
-          this.router.navigate(['/hotel-booking', email], {replaceUrl: true}); //ruta par redirigir luego del inicio de seción existoso
+          // Redirigir al usuario a la página de reservas de hotel después de un inicio de sesión exitoso
+          this.router.navigate(['/hotel-booking', email], { replaceUrl: true });
         },
         error: error => {
-          // muestra un mensaje de error en consola
-          console.error('Error sending data', error);
+          // Mostrar un mensaje de error en consola
+          console.error('Error al enviar datos', error);
           this.responseMessage = error.error.error || 'Error al enviar los datos';
           this.isSuccess = false;
 
-          // Mensaje de error visible por 5 segundos
+          // Mensaje de error visible por 3 segundos
           setTimeout(() => {
             this.responseMessage = '';
             this.isSuccess = null;
           }, 3000);
         }
       });
-    }else {
+    } else {
       // Marcar los campos como tocados para mostrar errores si están vacíos
       this.loginForm.markAllAsTouched();
       this.responseMessage = 'Por favor, completa todos los campos requeridos.';

@@ -3,15 +3,24 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../../services/data.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
+
 @Component({
   selector: 'app-hotel-booking',
   templateUrl: './hotel-booking.component.html',
   styleUrls: ['./hotel-booking.component.css']
 })
 export class HotelBookingComponent implements OnInit {
+  // Correo electrónico del usuario
   userEmail: string = '';
+  // Formulario para mostrar los detalles del usuario
   userDetailsForm: FormGroup;
+  // Formulario para editar los detalles del usuario
   editUserForm: FormGroup;
+  // Lista
+  tasks: any[] = [];
+  newTask: any = { title: '', description: '' };
+  editedTask: any = null;
+  editingTaskId: number | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -19,6 +28,7 @@ export class HotelBookingComponent implements OnInit {
     private dataService: DataService,
     private fb: FormBuilder
   ) {
+    // Inicializar los formularios con sus respectivos campos y validaciones
     this.userDetailsForm = this.fb.group({
       name: [{ value: '', disabled: true }],
       lastname: [{ value: '', disabled: true }],
@@ -35,7 +45,10 @@ export class HotelBookingComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Obtener el correo electrónico del usuario desde los parámetros de la ruta
     this.userEmail = this.route.snapshot.paramMap.get('email') ?? '';
+
+    this.loadTasks();
 
     // Para obtener solo la parte antes del @
     if (this.userEmail) {
@@ -48,6 +61,75 @@ export class HotelBookingComponent implements OnInit {
     }, 5000);
   }
 
+  loadTasks(): void {
+    this.dataService.getTasks(this.userEmail).subscribe({
+      next: (data) => {
+        this.tasks = data;
+      },
+      error: (error) => {
+        console.error('Error al obtener las tareas:', error);
+      }
+    });
+  }
+
+  addTask(): void {
+    // Validar que los campos no estén vacíos antes de agregar la tarea
+    if (this.newTask.title.trim() === '' || this.newTask.description.trim() === '') {
+      console.warn('Los campos de título y descripción no pueden estar vacíos.');
+      this.showNotification('Por favor completa los campos de título y descripción.', 'error');
+      return;
+    }
+
+    this.dataService.createTask(this.userEmail, this.newTask).subscribe({
+      next: () => {
+        this.loadTasks();
+        this.newTask = { title: '', description: '' };
+      },
+      error: error => console.error('Error al crear la tarea:', error)
+    });
+  }
+
+  editTask(task: any): void {
+    this.editedTask = { ...task }; // Copia la tarea para edición
+    this.editingTaskId = task.id; // Establece el ID de la tarea en edición
+  }
+
+  cancelEdit(): void {
+    this.editedTask = null; // Reinicia la tarea editada
+    this.editingTaskId = null; // Reinicia el ID de la tarea en edición
+  }
+
+  updateTask(): void {
+    if (this.editedTask) {
+      const { id, title, description } = this.editedTask;
+      this.dataService.updateTask(id, { title, description }).subscribe({
+        next: () => {
+          console.log('Tarea actualizada correctamente.');
+          this.loadTasks();
+          this.editedTask = null;
+          this.editingTaskId = null;
+        },
+        error: error => {
+          console.error('Error al actualizar la tarea:', error);
+        }
+      });
+    } else {
+      console.warn('No hay tarea seleccionada para actualizar.');
+    }
+  }
+
+  deleteTask(id: number): void {
+    this.dataService.deleteTask(id).subscribe({
+      next: () => {
+        this.loadTasks();
+      },
+      error: (error) => {
+        console.error('Error al eliminar la tarea:', error);
+      }
+    });
+  }
+
+  // Método para abrir el modal de confirmación de eliminación de cuenta
   openDeleteModal() {
     const modal = document.getElementById('confirmDeleteModal');
     if (modal) {
@@ -62,6 +144,7 @@ export class HotelBookingComponent implements OnInit {
     }
   }
 
+  // Método para cerrar el modal de confirmación de eliminación de cuenta
   closeDeleteModal() {
     const modal = document.getElementById('confirmDeleteModal');
     if (modal) {
@@ -77,6 +160,7 @@ export class HotelBookingComponent implements OnInit {
     }
   }
 
+  // Método para mostrar una notificación
   showNotification(message: string, type: 'success' | 'error') {
     const notificationContainer = document.getElementById('notificationContainer');
     if (notificationContainer) {
@@ -94,6 +178,7 @@ export class HotelBookingComponent implements OnInit {
       notification.appendChild(closeButton);
       notificationContainer.appendChild(notification);
 
+      // Ocultar la notificación después de 3 segundos
       setTimeout(() => {
         notification.classList.remove('show');
         setTimeout(() => {
@@ -103,6 +188,7 @@ export class HotelBookingComponent implements OnInit {
     }
   }
 
+  // Método para eliminar una cuenta
   deleteAccount() {
     const email = this.route.snapshot.paramMap.get('email');
 
@@ -126,10 +212,12 @@ export class HotelBookingComponent implements OnInit {
     }
   }
 
+  // Método para cancelar la eliminación de cuenta
   cancelDelete() {
     this.closeDeleteModal();
   }
 
+  // Método para abrir el modal de detalles del usuario
   openUserDetailsModal() {
     const email = this.route.snapshot.paramMap.get('email');
 
@@ -169,6 +257,7 @@ export class HotelBookingComponent implements OnInit {
     }
   }
 
+  // Método para cerrar el modal de detalles del usuario
   closeUserDetailsModal() {
     const modal = document.getElementById('userDetailsModal');
     if (modal) {
@@ -184,6 +273,7 @@ export class HotelBookingComponent implements OnInit {
     }
   }
 
+  // Método para abrir el modal de edición del usuario
   openEditUserModal() {
     this.closeUserDetailsModal();
 
@@ -200,6 +290,7 @@ export class HotelBookingComponent implements OnInit {
     }
   }
 
+  // Método para cerrar el modal de edición del usuario
   closeEditUserModal() {
     const modal = document.getElementById('editUserModal');
     if (modal) {
@@ -215,6 +306,7 @@ export class HotelBookingComponent implements OnInit {
     }
   }
 
+  // Método para actualizar los datos del usuario
   updateUser() {
     const formData = {
       name: this.editUserForm.get('name')?.value,
@@ -243,6 +335,7 @@ export class HotelBookingComponent implements OnInit {
     this.editUserForm.reset();
   }
 
+  // Método para cerrar sesión
   logout() {
     this.dataService.logout().subscribe({
       next: response => {
@@ -260,3 +353,4 @@ export class HotelBookingComponent implements OnInit {
     });
   }
 }
+
