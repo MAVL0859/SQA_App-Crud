@@ -36,6 +36,7 @@ Para iniciar la aplicación, asegúrate de tener Node.js instalado y sigue estos
 2. Navega al directorio del proyecto y ejecuta `npm install` para instalar las dependencias.
 3. Ejecuta `node server.js` para iniciar el servidor.
 4. Accede a la aplicación a través de `http://localhost:3000` en tu navegador.
+5. Ejecuta `ng serve -o` para inicar la aplicación. Se abrirá automaticamente en tu navegador.
 
 ## Autor
 
