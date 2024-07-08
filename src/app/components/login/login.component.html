@@ -1,3 +1,4 @@
+<!--Contenedor del login-->
 <div class="container mt-5">
   <div class="row justify-content-center">
     <div class="col-md-6">
@@ -5,11 +6,15 @@
         <div class="card-header text-center">
           <h3>Iniciar Sesión</h3>
         </div>
+        <!--Contenido del login-->
         <div class="card-body">
+          <!--Formulario de login-->
           <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <!--Campos de formulario-->
             <div class="form-group mb-3">
               <label for="email" class="form-label">Email:</label>
               <input id="email" type="email" formControlName="email" class="form-control" placeholder="Ingresa tu correo electrónico" required>
+              <!--Mensaje para cuando los campos entan vacíos-->
               <div *ngIf="loginForm.get('email')?.invalid && (loginForm.get('email')?.dirty || loginForm.get('email')?.touched)" class="text-danger alert alert-warning custom-alert">
                 Correo electrónico es requerido
               </div>
@@ -21,6 +26,7 @@
                Contraseña es requerida
               </div>
             </div>
+            <!--Botón de envio-->
             <div class="d-flex justify-content-center">
               <button type="submit" class="btn btn-primary">Ingresar</button>
             </div>

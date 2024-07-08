@@ -27,6 +27,7 @@
           </div>
         </form>
       </div>
+      <!--Botones para cerrar el modal y para editar el perfil dentro del modal-->
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" (click)="closeUserDetailsModal()">Cerrar</button>
         <button type="button" class="btn btn-primary" (click)="openEditUserModal()">Editar perfil</button>
@@ -35,7 +36,7 @@
   </div>
 </div>
 
-<!-- Modal para editar datos del usuario -->
+<!-- Modal para editar datos del usuario (se abre cuando se preciona el botón de 'editar perfil')-->
 <div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -71,7 +72,7 @@
   </div>
 </div>
 
-<!-- Modal para confirmar la eliminación -->
+<!-- Modal para confirmar la eliminación (Aparece cuando se preciona el botón "eliminar perfil") -->
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel"
   aria-hidden="true">
   <div class="modal-dialog">
@@ -96,11 +97,12 @@
 
 
 <div class="container">
-  <!-- Mensaje de bienvenida -->
+  <!-- Mensaje de bienvenida (lee el nombre de usuario del correo elecgrónico (solo lo que se encuentra antes del @))-->
   <div *ngIf="userEmail" class="alert alert-success mt-3" role="alert">
     <p>Bienvenido a nuestra aplicación de lista de tareas, <strong>{{ userEmail }}</strong>!</p>
   </div>
 
+  <!-- Botón para abrir el modal de configuraciones -->
   <div class="dropdown mt-3">
     <button class="btn btn-outline-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown"
       aria-expanded="false">
@@ -116,6 +118,7 @@
     </ul>
   </div>
 
+  <!-- Contenido principal -->
   <div class="task-list-container">
     <h1 class="display-4">Administrador de tareas</h1>
     <p class="lead">Administre sus tareas diarias de manera eficiente.</p>
@@ -132,6 +135,22 @@
                 <th scope="col">Acciones</th>
               </tr>
             </thead>
+            <!--
+              Este archivo HTML muestra una tabla con tareas. Cada tarea se muestra en una fila de la tabla.
+              Si la tarea no está siendo editada, se muestra su título, descripción y botones para editar y eliminar.
+              Si la tarea está siendo editada, se muestra un formulario con campos de entrada para editar el título y la descripción de la tarea, y botones para guardar o cancelar la edición.
+
+              Atributos:
+              - *ngFor: Directiva estructural que itera sobre una colección y genera elementos HTML para cada elemento de la colección.
+              - [ngIf]: Directiva estructural que muestra u oculta elementos HTML en función de una expresión booleana.
+              - [(ngModel)]: Directiva de enlace bidireccional que enlaza el valor de un elemento de entrada HTML a una propiedad en el componente.
+
+              Métodos:
+              - editTask(task): Método que se ejecuta al hacer clic en el botón "Editar" de una tarea. Establece el ID de la tarea en el componente para indicar que está siendo editada.
+              - deleteTask(task.id): Método que se ejecuta al hacer clic en el botón "Eliminar" de una tarea. Elimina la tarea con el ID especificado.
+              - updateTask(): Método que se ejecuta al hacer clic en el botón "Guardar" de una tarea en edición. Actualiza la tarea con los nuevos valores del formulario.
+              - cancelEdit(): Método que se ejecuta al hacer clic en el botón "Cancelar" de una tarea en edición. Cancela la edición y vuelve a mostrar la tarea sin cambios.
+            -->
             <tbody>
               <ng-container *ngFor="let task of tasks">
                 <tr>
@@ -154,10 +173,14 @@
                 </tr>
               </ng-container>
             </tbody>
-          </table>
-        </div>
-      </div>
+            </table>
+            </div>
+            </div>
 
+      <!--
+        Este archivo contiene el código HTML de un componente llamado "hotel-booking" que se utiliza para agregar una nueva tarea.
+        El formulario permite al usuario ingresar el título y la descripción de la tarea, y luego agregarla al sistema al hacer clic en el botón "Agregar Tarea".
+      -->
       <div class="col-md-4">
         <h2>Agregar Nueva Tarea</h2>
         <form (ngSubmit)="addTask()">
@@ -174,10 +197,11 @@
           <button type="submit" class="btn btn-success">Agregar Tarea</button>
         </form>
       </div>
-    </div>
+      </div>
 
     <hr>
 
+    <!-- Información Adicional -->
     <div class="info-container mt-5">
       <h2>Información Adicional</h2>
       <div class="row">

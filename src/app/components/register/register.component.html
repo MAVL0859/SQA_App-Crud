@@ -1,3 +1,4 @@
+<!--Contenedor principal del formulario register-->
 <div class="container mt-5">
   <div class="row justify-content-center">
     <div class="col-md-6">
@@ -5,7 +6,9 @@
         <div class="card-header text-center">
           <h3>Registro</h3>
         </div>
+        <!--Contenido del register-->
         <div class="card-body">
+          <!--Formulario de registro-->
           <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
             <div class="form-group mb-3">
               <label for="name" class="form-label">Nombre:</label>
@@ -39,6 +42,7 @@
               <label for="phonenumber" class="form-label">Número de teléfono:</label>
               <input id="phonenumber" type="text" formControlName="phonenumber" class="form-control" placeholder="Ingresa tu número de teléfono">
             </div>
+            <!--Botón de envío del formulario de registro-->
             <div class="d-flex justify-content-center">
               <button type="submit" class="btn btn-primary">Registrarse</button>
             </div>
