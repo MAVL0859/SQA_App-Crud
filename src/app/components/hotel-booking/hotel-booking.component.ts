@@ -18,17 +18,27 @@ export class HotelBookingComponent implements OnInit {
   editUserForm: FormGroup;
   // Lista
   tasks: any[] = [];
+  // Tarea actualmente editada
   newTask: any = { title: '', description: '' };
   editedTask: any = null;
+  // ID de la tarea en edición
   editingTaskId: number | null = null;
 
+  /**
+   * Constructor de la clase HotelBookingComponent.
+   *
+   * @param route - El enrutador activado actualmente.
+   * @param router - El enrutador utilizado para la navegación.
+   * @param dataService - El servicio de datos utilizado para obtener los detalles del usuario.
+   * @param fb - El constructor de formularios utilizado para crear los formularios.
+   */
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private dataService: DataService,
     private fb: FormBuilder
   ) {
-    // Inicializar los formularios con sus respectivos campos y validaciones
+    // Inicializa los formularios con sus respectivos campos y validaciones
     this.userDetailsForm = this.fb.group({
       name: [{ value: '', disabled: true }],
       lastname: [{ value: '', disabled: true }],
@@ -36,6 +46,7 @@ export class HotelBookingComponent implements OnInit {
       phonenumber: [{ value: '', disabled: true }]
     });
 
+    // Inicializa los formularios para la edición, el email se desabilita para no permitir la edición en aquel campo
     this.editUserForm = this.fb.group({
       name: [''],
       lastname: [''],
@@ -44,6 +55,10 @@ export class HotelBookingComponent implements OnInit {
     });
   }
 
+  /**
+   * Método del ciclo de vida de Angular que se ejecuta después de que se haya inicializado el componente.
+   * Se utiliza para realizar tareas de inicialización, como obtener el correo electrónico del usuario y cargar las tareas.
+   */
   ngOnInit(): void {
     // Obtener el correo electrónico del usuario desde los parámetros de la ruta
     this.userEmail = this.route.snapshot.paramMap.get('email') ?? '';
@@ -61,6 +76,9 @@ export class HotelBookingComponent implements OnInit {
     }, 5000);
   }
 
+  /**
+   * Carga las tareas del usuario actual.
+   */
   loadTasks(): void {
     this.dataService.getTasks(this.userEmail).subscribe({
       next: (data) => {
@@ -72,6 +90,17 @@ export class HotelBookingComponent implements OnInit {
     });
   }
 
+  /**
+   * Agrega una tarea.
+   *
+   * Valida que los campos no estén vacíos antes de agregar la tarea. Si alguno de los campos está vacío,
+   * muestra una notificación de error y no agrega la tarea.
+   *
+   * Luego, utiliza el servicio de datos para crear la tarea asociada al usuario actual. Si la tarea se crea
+   * correctamente, se recarga la lista de tareas y se reinicia el formulario de nueva tarea.
+   *
+   * @returns void
+   */
   addTask(): void {
     // Validar que los campos no estén vacíos antes de agregar la tarea
     if (this.newTask.title.trim() === '' || this.newTask.description.trim() === '') {
@@ -89,16 +118,27 @@ export class HotelBookingComponent implements OnInit {
     });
   }
 
+  /**
+   * Edita una tarea.
+   *
+   * @param task La tarea a editar.
+   */
   editTask(task: any): void {
     this.editedTask = { ...task }; // Copia la tarea para edición
     this.editingTaskId = task.id; // Establece el ID de la tarea en edición
   }
 
+  /**
+   * Cancela la edición de la tarea.
+   */
   cancelEdit(): void {
     this.editedTask = null; // Reinicia la tarea editada
     this.editingTaskId = null; // Reinicia el ID de la tarea en edición
   }
 
+  /**
+   * Actualiza la tarea seleccionada.
+   */
   updateTask(): void {
     if (this.editedTask) {
       const { id, title, description } = this.editedTask;
@@ -118,6 +158,11 @@ export class HotelBookingComponent implements OnInit {
     }
   }
 
+  /**
+   * Elimina una tarea por su identificador.
+   *
+   * @param id El identificador de la tarea a eliminar.
+   */
   deleteTask(id: number): void {
     this.dataService.deleteTask(id).subscribe({
       next: () => {
@@ -130,6 +175,9 @@ export class HotelBookingComponent implements OnInit {
   }
 
   // Método para abrir el modal de confirmación de eliminación de cuenta
+  /**
+   * Abre el modal de confirmación de eliminación.
+   */
   openDeleteModal() {
     const modal = document.getElementById('confirmDeleteModal');
     if (modal) {
@@ -189,6 +237,15 @@ export class HotelBookingComponent implements OnInit {
   }
 
   // Método para eliminar una cuenta
+  /**
+   * Elimina una cuenta de usuario.
+   *
+   * @remarks
+   * Este método obtiene el correo electrónico del usuario a eliminar a partir de los parámetros de la ruta actual.
+   * Luego, llama al servicio `dataService` para eliminar la cuenta asociada al correo electrónico proporcionado.
+   * Si la eliminación es exitosa, se muestra un mensaje de éxito, se cierra el modal de eliminación, se borra la información del usuario y se redirige a la página de inicio de sesión después de 2 segundos.
+   * En caso de error, se muestra un mensaje de error y se cierra el modal de eliminación.
+   */
   deleteAccount() {
     const email = this.route.snapshot.paramMap.get('email');
 
@@ -218,6 +275,12 @@ export class HotelBookingComponent implements OnInit {
   }
 
   // Método para abrir el modal de detalles del usuario
+  /**
+   * Abre el modal de detalles de usuario.
+   * Obtiene los detalles del usuario a través del servicio de datos y los muestra en el formulario.
+   * Si se encuentra el correo electrónico del usuario, se muestra el modal con los detalles del usuario.
+   * Si ocurre un error al obtener los datos del usuario, se muestra una notificación de error.
+   */
   openUserDetailsModal() {
     const email = this.route.snapshot.paramMap.get('email');
 
@@ -307,6 +370,9 @@ export class HotelBookingComponent implements OnInit {
   }
 
   // Método para actualizar los datos del usuario
+  /**
+   * Actualiza los datos del usuario.
+   */
   updateUser() {
     const formData = {
       name: this.editUserForm.get('name')?.value,
@@ -314,7 +380,6 @@ export class HotelBookingComponent implements OnInit {
       email: this.editUserForm.get('email')?.value,
       phonenumber: this.editUserForm.get('phonenumber')?.value
     };
-
     this.dataService.updateUser(formData).subscribe({
       next: response => {
         console.log('Datos del usuario actualizados correctamente', response);
@@ -336,6 +401,14 @@ export class HotelBookingComponent implements OnInit {
   }
 
   // Método para cerrar sesión
+  /**
+   * Cierra la sesión del usuario.
+   *
+   * @remarks
+   * Este método llama al servicio de datos para cerrar la sesión del usuario actual.
+   * Si la operación es exitosa, muestra una notificación de éxito, borra los datos del usuario y redirige a la página de inicio de sesión después de 2 segundos.
+   * Si ocurre un error, muestra una notificación de error.
+   */
   logout() {
     this.dataService.logout().subscribe({
       next: response => {

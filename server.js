@@ -100,6 +100,11 @@ app.post('/register', (req, res) => {
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
 
+  // Verificar si el correo electrónico existe en la base de datos
+  /**
+   * Consulta SQL para obtener la contraseña de un usuario por su correo electrónico.
+   * @type {string}
+   */
   const query = 'SELECT password FROM registerform WHERE email = ?';
   db.query(query, [email], (err, results) => {
     if (err) {
@@ -135,6 +140,10 @@ app.post('/login', (req, res) => {
 app.delete('/delete-account', (req, res) => {
   const email = req.query.email; // Obtener el email de la consulta
 
+  /**
+   * Consulta SQL para eliminar registros de la tabla registerform.
+   * @type {string}
+   */
   const query = 'DELETE FROM registerform WHERE email = ?';
   db.query(query, [email], (err, result) => {
     if (err) {
@@ -156,6 +165,10 @@ app.delete('/delete-account', (req, res) => {
 app.get('/user-details', (req, res) => {
   const email = req.query.email; // Obtener el email de la consulta
 
+  /**
+   * Consulta SQL para obtener el nombre, apellido, correo electrónico y número de teléfono de un registro en la tabla registerform.
+   * @type {string}
+   */
   const query = 'SELECT name, lastname, email, phonenumber FROM registerform WHERE email = ?';
   db.query(query, [email], (err, results) => {
     if (err) {
@@ -177,6 +190,10 @@ app.get('/user-details', (req, res) => {
 app.put('/update-user', (req, res) => {
   const { name, lastname, email, phonenumber } = req.body;
 
+  /**
+   * Consulta SQL para actualizar los datos de un registro en la tabla registerform.
+   * @type {string}
+   */
   const query = 'UPDATE registerform SET name = ?, lastname = ?, phonenumber = ? WHERE email = ?';
   db.query(query, [name, lastname, phonenumber, email], (err, result) => {
     if (err) {
@@ -201,6 +218,10 @@ app.post('/logout', (req, res) => {
 
 // Endpoint para obtener todas las tareas
 app.get('/tasks', (req, res) => {
+  /**
+   * Consulta para obtener todas las tareas.
+   * @type {string}
+   */
   const query = 'SELECT * FROM tasks';
   db.query(query, (err, results) => {
     if (err) {
@@ -215,6 +236,10 @@ app.get('/tasks', (req, res) => {
 // Endpoint para crear una nueva tarea
 app.post('/tasks', (req, res) => {
   const { title, description } = req.body;
+  /**
+   * Consulta SQL para insertar una tarea en la base de datos.
+   * @type {string}
+   */
   const query = 'INSERT INTO tasks (title, description) VALUES (?, ?)';
   db.query(query, [title, description], (err, result) => {
     if (err) {
@@ -230,6 +255,10 @@ app.post('/tasks', (req, res) => {
 app.put('/tasks/:id', (req, res) => {
   const id = req.params.id;
   const { title, description } = req.body;
+  /**
+   * Consulta SQL para actualizar una tarea en la base de datos.
+   * @type {string}
+   */
   const query = 'UPDATE tasks SET title = ?, description = ? WHERE id = ?';
   db.query(query, [title, description, id], (err, result) => {
     if (err) {
@@ -248,6 +277,10 @@ app.put('/tasks/:id', (req, res) => {
 // Endpoint para eliminar una tarea
 app.delete('/tasks/:id', (req, res) => {
   const id = req.params.id;
+  /**
+   * Consulta SQL para eliminar una tarea por su ID.
+   * @type {string}
+   */
   const query = 'DELETE FROM tasks WHERE id = ?';
   db.query(query, [id], (err, result) => {
     if (err) {
